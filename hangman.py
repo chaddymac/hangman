@@ -1,4 +1,9 @@
 import random
+import os
+
+# Function created to mask the word until guessed
+# TO DO: Make sure the user is inputting only letters
+# TO DO: Make sure the user is inputting one letter at a time
 
 
 def asterisker(random_word, guesses):
@@ -12,37 +17,38 @@ def asterisker(random_word, guesses):
     return result
 
 
-# list of words
-# TODO: Get large list of words from somewhere
-hangman_words = ["target", "walmart", "Dollar General", "Kroger", "CVS"]
+# word bank from https://github.com/Xethron/Hangman/blob/master/words.txt
+def wordselect():
+    read_words = open('./hangmanwords.txt').read().splitlines()
 
-# chooses a random word from the list
-random_word = random.choice(hangman_words).lower()
+    return random.choice(read_words)
 
-# length of the random word
+
+random_word = wordselect()
+
 word_len = len(random_word)
-
-# Print statement for the game to begin
 letter_list = list(random_word)
 guesses = []
 
-len_ofword = "The word is {} letters long.".format(word_len)
-print(len_ofword)
+
+print("The word is {} letters long.".format(word_len))
 guess_letter = input(" Guess a letter ").lower()
-done = False
+keep_going = True
 
 # Checking if the letter is in the word
-while not done:
+while keep_going:
     if guess_letter in random_word:
         print("That letter is correct")
     else:
         print("nope guess again!")
-    for guess in guesses:
-        if guess in letter_list:
-            done = True
     guesses.append(guess_letter)
     asterisker(random_word, guesses)
-    guess_letter = input(" Guess a letter ")
 
+# checks if the letter_list set is a subset of guesses then
+# keep going becomes false and ends the game.
+    if set(sorted(letter_list)).issubset(set(sorted(guesses))):
+        keep_going = False
+        print("Great job you won!")
+    else:
+        guess_letter = input(" Guess a letter ")
 
-# TODO: Print partially filled out word
